@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TrailHound v3.8</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #e3f2fd;
+      text-align: left;
+    }
+    .folder-item {
+      cursor: pointer;
+    }
+    .folder-item:hover {
+      background-color: #eef;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="folderInput" placeholder="Enter media directory path">
+  <button onclick="browseAndScan()">Browse...</button>
+  <div id="folderInfo"></div>
+  <table>
+    <thead>
+      <tr><th>Media Folder</th><th>Trailer</th><th>Logo</th></tr>
+    </thead>
+    <tbody id="folderTableBody"></tbody>
+  </table>
+
+  <script>
+    async function browseAndScan() {
+      const path = await window.pywebview.api.select_folder();
+      if (path && path.length > 0) {
+        document.getElementById('folderInput').value = path[0];
+        scanFolders(path[0]);
+      }
+    }
+
+    async function scanFolders(path) {
+      const list = await window.pywebview.api.scan(path);
+      const body = document.getElementById('folderTableBody');
+      const info = document.getElementById('folderInfo');
+      body.innerHTML = '';
+      if (list.error) {
+        info.innerHTML = `<p>${list.error}</p>`;
+        return;
+      }
+
+      let trailerCount = 0;
+      list.forEach(folder => {
+        if (folder.found) trailerCount++;
+        const row = document.createElement('tr');
+        row.className = 'folder-item';
+        row.innerHTML = `
+          <td>${folder.name}</td>
+          <td style="text-align:center;">${folder.found ? '✅' : '❌'}</td>
+          <td style="text-align:center;">${folder.logo ? '✅' : '❌'}</td>
+        `;
+        row.onclick = async () => {
+          await window.pywebview.api.set_foldername(folder.name);
+          document.getElementById('searchInput').value = `${folder.name} trailer`;
+          performSearch();
+        };
+        body.appendChild(row);
+      });
+
+      info.innerHTML = `<strong>Media Trailers: ${trailerCount}/${list.length}</strong><br><br>`;
+    }
+  </script>
+</body>
+</html>
