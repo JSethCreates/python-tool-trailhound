@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TrailHound v4.4</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+    input[type="text"], button {
+      font-size: 14px;
+      padding: 10px;
+      margin: 4px 2px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #1e88e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1565c0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+    th, td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #e3f2fd;
+      text-align: left;
+    }
+    .folder-item {
+      cursor: pointer;
+    }
+    .folder-item:hover {
+      background-color: #eef;
+    }
+    .results-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+    }
+    .result {
+      flex: 0 0 500px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    iframe {
+      width: 100%;
+      height: 280px;
+      border: none;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+    .folder-item.active { background-color: #bbdefb !important; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div>
+    <input type="text" id="folderInput" placeholder="Enter media directory path">
+    <button onclick="browseAndScan()">Browse...</button>
+    <div id="folderInfo"><em>Scan results will appear below</em></div>
+    <div style='max-height: 420px; width: 50%; overflow-y: auto; display: block;'><table style='width: 100%;'>
+	<thead id="tableHead"></thead>
+      <tbody id="folderTableBody"></tbody>
+    </table></div>
+  </div>
+
+  <div>
+    <h2>YouTube Search</h2>
+    <input type="text" id="searchInput" placeholder="Search YouTube..." size="50">
+    <button onclick="performSearch()">Search</button>
+    <div>
+      <input type="text" id="apiKeyInput" placeholder="Optional YouTube API key" size="50">
+    </div>
+  </div>
+
+  <div id="results" class="results-container"></div>
+
+  <script>
+    let selectedFolder = null;
+
+    document.getElementById('searchInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') performSearch();
+    });
+
+    async function browseAndScan() {
+      const path = await window.pywebview.api.select_folder();
+      if (path && path.length > 0) {
+        document.getElementById('folderInput').value = path[0];
+        scanFolders(path[0]);
+      }
+    }
+
+    async function scanFolders(path) {
+      const list = await window.pywebview.api.scan(path);
+      const body = document.getElementById('folderTableBody');
+      const info = document.getElementById('folderInfo');
+      body.innerHTML = '';
+      if (list.error) {
+        info.innerHTML = `<p>${list.error}</p>`;
+        return;
+      }
+
+	  const total = list.length;
+      let trailerCount = 0;
+	  let logoCount = 0;
+	  let clearartCount = 0;
+	  let fanartCount = 0;
+	  
+      list.forEach(folder => {
+		if (folder.found) trailerCount++;
+		if (folder.logo) logoCount++;
+		if (folder.clearart) clearartCount++;
+		if (folder.fanart) fanartCount++;
+        const row = document.createElement('tr');
+        row.className = 'folder-item';
+		row.innerHTML = `
+		  <td>${folder.name}</td>
+		  <td style="text-align:center;">${folder.found ? '✅' : '❌'}</td>
+		  <td style="text-align:center;">${folder.logo ? '✅' : '❌'}</td>
+		  <td style="text-align:center;">${folder.clearart ? '✅' : '❌'}</td>
+		  <td style="text-align:center;">${folder.fanart ? '✅' : '❌'}</td>
+		`;
+        row.onclick = async () => {
+          document.querySelectorAll('.folder-item').forEach(r => r.classList.remove('active'));
+          row.classList.add('active');
+          selectedFolder = folder.name;
+          await window.pywebview.api.set_foldername(folder.name);
+          document.getElementById('searchInput').value = `${folder.name} trailer`;
+          performSearch();
+        };
+        body.appendChild(row);
+      });
+	  const head = document.getElementById('tableHead');
+		head.innerHTML = `
+		  <tr>
+			<th>Media Folders (${total})</th>
+			<th>Trailers (${trailerCount}/${total})</th>
+			<th>Logos (${logoCount}/${total})</th>
+			<th>Clearart (${clearartCount}/${total})</th>
+			<th>Fanart (${fanartCount}/${total})</th>
+		  </tr>
+		`;
+
+    }
+
+    async function performSearch() {
+      const query = document.getElementById('searchInput').value;
+      const apiKey = document.getElementById('apiKeyInput').value || null;
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '<p>Scraping without api key (slower)...</p>';
+
+      const results = await window.pywebview.api.search(query, apiKey);
+      resultsDiv.innerHTML = '';
+
+      if (!results || results.error) {
+        resultsDiv.innerHTML = `<p>Error: ${results.error}</p>`;
+        return;
+      }
+
+      results.forEach(async video => {
+        const container = document.createElement('div');
+        container.className = 'result';
+
+        const title = document.createElement('h3');
+        title.textContent = video.title;
+
+        const iframe = document.createElement('iframe');
+        iframe.src = video.embed;
+
+        const controls = document.createElement('div');
+        controls.innerHTML = `
+          <strong>Resolution:</strong> <span class="resDisplay">${video.resolution || 'Loading...'}</span><br>
+          <label>Start: <input type="text" value="0:00" class="startTime" size="5"></label>
+          <label>End: <input type="text" value="${video.duration || ''}" class="endTime" size="5"></label><br>
+          <button class="downloadBtn">Download</button>
+          <button class="previewBtn">Preview</button>
+        `;
+
+        container.appendChild(title);
+        container.appendChild(iframe);
+        container.appendChild(controls);
+        resultsDiv.appendChild(container);
+
+        if (!video.resolution || !video.duration) {
+          const meta = await window.pywebview.api.fetch_metadata(video.url);
+          controls.querySelector('.resDisplay').textContent = meta.resolution || 'Unknown';
+          controls.querySelector('.endTime').value = meta.duration || '';
+        }
+
+        const btn = controls.querySelector('.downloadBtn');
+        const previewBtn = controls.querySelector('.previewBtn');
+
+        btn.onclick = async () => {
+          const start = controls.querySelector('.startTime').value || null;
+          const end = controls.querySelector('.endTime').value || null;
+          btn.textContent = 'Downloading...';
+          btn.disabled = true;
+          const msg = await window.pywebview.api.download(video.url, start, end);
+          btn.textContent = msg.includes('complete') ? '✔ Complete' : '✖ Failed';
+          btn.disabled = false;
+
+          if (msg.includes('complete')) {
+            const name = await window.pywebview.api.mark_trailer_downloaded();
+            document.querySelectorAll('.folder-item').forEach(row => {
+              if (row.innerText.includes(name)) {
+                row.cells[1].innerText = '✅';
+              }
+            });
+
+            const badge = document.createElement('div');
+            badge.textContent = '✔ Downloaded';
+            badge.style.cssText = "color: green; font-weight: bold; font-size: 14px; margin-top: 5px;";
+            container.insertBefore(badge, iframe);
+          }
+        };
+
+        previewBtn.onclick = async () => {
+          await window.pywebview.api.preview();
+        };
+      });
+    }
+  </script>
+</body>
+</html>
