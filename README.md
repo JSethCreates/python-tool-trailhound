@@ -27,6 +27,8 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 
 Download and launch trailhound.exe
 
+---
+
 <details>
 <summary>💻 Python Source</summary>
 
