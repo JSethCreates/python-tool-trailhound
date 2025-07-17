@@ -30,7 +30,7 @@ Download and launch trailhound.exe
 ---
 
 <details>
-<summary>💻 Run using Python Source</summary>
+<summary> ### 💻 Run using Python Source</summary>
 
 ### Requirements
 
