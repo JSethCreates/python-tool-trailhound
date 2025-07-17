@@ -35,23 +35,16 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 ### Requirements
 
 - Python 3.9 or newer
-- [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) installed and on your PATH
 
 ### Install Python dependencies
 
 ```
-pip install -r requirements.txt
-```
-
-### Install yt-dlp
-
-```
-pip install -U yt-dlp
+pip install pywebview requests
 ```
 
 ### Required files
 
-Download index.html, th_ytdlp_runner.exe and trailhound.py
+Download index.html, th_ytdlp_runner.exe and trailhound.py to a directory.
 
 
 ### Run
