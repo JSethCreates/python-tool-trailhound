@@ -24,17 +24,14 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 
 ## 🚀 Installation
 
-### ✅ Windows (recommended)
+### ✅ Windows
 
-1. Download the latest `release.zip` from [Releases](../../releases).
-2. Unzip it anywhere you like.
-3. Make sure `trailhound.exe`, `yt-dlp.exe`, and `index.html` are all in the same folder.
-4. Double-click `trailhound.exe`.
+Download and launch trailhound.exe
 
 ---
 
 <details>
-<summary>💻 Python source version (for advanced users)</summary>
+<summary>💻 Python Source</summary>
 
 ### Requirements
 
@@ -52,6 +49,11 @@ pip install -r requirements.txt
 ```
 pip install -U yt-dlp
 ```
+
+### Required files
+
+Download index.html, th_ytdlp_runner.exe and trailhound.py
+
 
 ### Run
 
