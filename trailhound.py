@@ -1,4 +1,4 @@
-# TrailHound v6.4
+# TrailHound v6.5
 
 import webview
 import subprocess
@@ -169,9 +169,10 @@ def download_video(video_url, start=None, end=None):
             '--force-overwrites'
         ]
 
-        if end and end.strip():
-            section_start = start if (start and start.strip() != "0:00") else ""
-            section_end = end.strip()
+        if ((start and start.strip() != "" and start.strip() != "0:00") or 
+            (end and end.strip() != "")):
+            section_start = start.strip() if start and start.strip() != "0:00" else ""
+            section_end = end.strip() if end and end.strip() else ""
             section = f"*{section_start}-{section_end}"
             command.extend(['--download-sections', section])
 
@@ -441,7 +442,7 @@ class Api:
 
 def start():
     api = Api()
-    window = webview.create_window('TrailHound v6.3', 'index.html', width=1600, height=1050)
+    window = webview.create_window('TrailHound v6.5', 'index.html', width=1600, height=1050)
     window.expose(api.search)
     window.expose(api.download)
     window.expose(api.scan)
