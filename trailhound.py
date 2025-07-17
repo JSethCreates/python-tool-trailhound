@@ -285,7 +285,7 @@ def get_nfo_trailer(foldername):
                         qs = parse_qs(parsed.query)
                         print(f"[NFO DEBUG] Parsed query string: {qs}")
 
-                        # Support both 'videoid' and 'video_id'
+                        # Supports both 'videoid' and 'video_id'
                         video_ids = qs.get('videoid') or qs.get('video_id')
                         if video_ids and video_ids[0]:
                             final_url = f"https://www.youtube.com/watch?v={video_ids[0]}"
