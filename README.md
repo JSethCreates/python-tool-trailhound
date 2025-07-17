@@ -14,12 +14,11 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 
 ## ✨ Features
 
-- ✅ **Scans your media folders for missing trailers**
-- 🔎 **Searches YouTube** (via API key or using yt-dlp scraping if no key is provided)
-- 🎥 **Downloads and optionally trims trailers using yt-dlp**
-- 🚫 **Mark folders as "no trailer"** to skip them in future scans
-- 🖼️ **Bonus**: Displays any existing local artwork (logo, clearart, fanart) and links out to TVDB artwork pages if you need more images
-
+- ✅ **Scans your media folders for missing trailers** Select a media folder to scan, click an item to search for trailers, click a header to sort
+- 🔎 **Searches YouTube** (via API key or using yt-dlp scraping if no key is provided) You may provide a different search term
+- 🎥 **Downloads and optionally trims trailers using yt-dlp** Enter a start and/or end time to download a partial video (to cut off vanity titles) 
+- 🚫 **Mark folders as "no trailer available"** to skip them in future scans (places 'notrailer.sad' file inside)
+- 🖼️ **Artwork helper**: Displays 3 types of existing local artwork, if available (logo, clearart, fanart) and clicking an X links out to TVDB artwork pages
 ---
 
 ## 🚀 Installation
@@ -73,10 +72,10 @@ Using a YouTube API key is optional but recommended for smoother, faster searche
 <summary>How to get a YouTube API key</summary>
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/).
-2. Create or select a project.
+2. Create a new project.
 3. Enable **YouTube Data API v3**.
 4. Create credentials → API key.
-5. Copy your key, paste it into TrailHound using the "Save API Key" button. It will auto-fill the next time you open the program.
+5. Copy your key into TrailHound, save it for next run using the "Save API Key" button.
 
 </details>
 
