@@ -65,7 +65,7 @@ python trailhound.py
 
 ## 🔑 YouTube API key (optional)
 
-Using a YouTube API key is optional but recommended for smoother, faster searches.
+Using a YouTube API key is optional but recommended for smoother, faster searches. Its free, easy and only takes 30 seconds and 5 clicks:
 
 <details>
 <summary>How to get a YouTube API key</summary>
