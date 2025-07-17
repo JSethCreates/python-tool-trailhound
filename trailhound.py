@@ -1,4 +1,4 @@
-# TrailHound v6.3 with NFO trailer support
+# TrailHound v6.4
 
 import webview
 import subprocess
