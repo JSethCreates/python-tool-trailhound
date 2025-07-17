@@ -9,8 +9,18 @@ import threading
 import http.server
 import socketserver
 import xml.etree.ElementTree as ET
+import sys
 
-API_KEY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "api_key.txt")
+def resource_dir():
+    if getattr(sys, 'frozen', False):
+        # Running as PyInstaller EXE
+        return os.path.dirname(sys.executable)
+    else:
+        # Running from .py
+        return os.path.dirname(os.path.abspath(__file__))
+
+API_KEY_FILE = os.path.join(resource_dir(), "api_key.txt")
+
 YTDLP_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "th_ytdlp_runner.exe")
 
 selected_dir = None
