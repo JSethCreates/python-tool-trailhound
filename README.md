@@ -10,6 +10,8 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 
 ---
 
+![Screenshot](screenshots/1.png)
+
 ## ✨ Features
 
 - ✅ **Scans your media folders for missing trailers**
