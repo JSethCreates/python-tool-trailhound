@@ -1,11 +1,16 @@
+<p align="left">
+  <img src="th.png" alt="TrailHound Logo" width="200">
+</p>
 
-# 🎬 TrailHound
+#    TrailHound
 
 TrailHound is a simple desktop tool to help you **check your local media folders for missing trailers and download them from YouTube**.
 
 It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle searches (if no API key), downloads, and trimming. You can also optionally use your own YouTube API key for faster and more accurate searches.
 
 ---
+
+![Screenshot](screenshots/1.PNG)
 
 ## ✨ Features
 
@@ -60,7 +65,7 @@ python trailhound.py
 
 ## 🔑 YouTube API key (optional)
 
-Using a YouTube API key is optional but recommended for smoother, faster searches.
+Using a YouTube API key is optional but recommended for smoother, faster searches. Its free, easy and only takes 30 seconds and 5 clicks:
 
 <details>
 <summary>How to get a YouTube API key</summary>
@@ -75,25 +80,9 @@ Using a YouTube API key is optional but recommended for smoother, faster searche
 
 ---
 
-## ⚙️ Dependencies
-
-- [pywebview](https://pywebview.flowrl.com/) — For the local HTML UI
-- [requests](https://docs.python-requests.org/en/master/) — For API calls
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) — Used for searches (without API), downloads, and trimming
-
----
-
 ## 📝 License
 
 TrailHound is licensed under the MIT License.  
 See [LICENSE](./LICENSE) for details.
 
 ---
-
-## 🌟 Screenshots
-
-> _(Add your UI screenshots here, focusing on trailer scanning and download workflow.)_
-
----
-
-## 🎥 Just a simple way to keep your local media collection stocked with trailers.
