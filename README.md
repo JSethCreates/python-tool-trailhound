@@ -80,25 +80,9 @@ Using a YouTube API key is optional but recommended for smoother, faster searche
 
 ---
 
-## ⚙️ Dependencies
-
-- [pywebview](https://pywebview.flowrl.com/) — For the local HTML UI
-- [requests](https://docs.python-requests.org/en/master/) — For API calls
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) — Used for searches (without API), downloads, and trimming
-
----
-
 ## 📝 License
 
 TrailHound is licensed under the MIT License.  
 See [LICENSE](./LICENSE) for details.
 
 ---
-
-## 🌟 Screenshots
-
-> _(Add your UI screenshots here, focusing on trailer scanning and download workflow.)_
-
----
-
-## 🎥 Just a simple way to keep your local media collection stocked with trailers.
