@@ -10,7 +10,7 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 
 ---
 
-![Screenshot](screenshots/1.png)
+![Screenshot](screenshots/1.PNG)
 
 ## ✨ Features
 
