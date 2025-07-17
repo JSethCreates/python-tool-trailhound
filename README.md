@@ -1,4 +1,4 @@
-
+![TrailHound Logo](th.png)
 # 🎬 TrailHound
 
 TrailHound is a simple desktop tool to help you **check your local media folders for missing trailers and download them from YouTube**.
