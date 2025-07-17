@@ -6,7 +6,7 @@
 
 TrailHound is a simple desktop tool to help you **check your local media folders for missing trailers and download them from YouTube**.
 
-It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle searches (if no API key), downloads, and trimming. You can also optionally use your own YouTube API key for faster and more accurate searches.
+It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle searches, downloads, and trimming. You can also optionally use your own YouTube API key for faster searching.
 
 ---
 
