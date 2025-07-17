@@ -26,6 +26,7 @@ It uses [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) behind the scenes to handle
 ### ✅ Windows
 
 Download and launch trailhound.exe
+
 ---
 
 <details>
