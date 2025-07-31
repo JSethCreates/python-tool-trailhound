@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>TrailHound v6.5</title>
+  <title>TrailHound v6.6</title>
 
     <style>
 	  body {
@@ -252,6 +252,10 @@
     <h2>YouTube Search</h2>
     <input type="text" id="searchInput" placeholder="Search YouTube..." size="50">
     <button onclick="performSearch()">Search</button>
+	  <div style="margin-top: 8px;">
+	  <input type="text" id="directUrlInput" placeholder="Or paste a direct YouTube URL here..." size="50">
+	  <button onclick="searchDirectUrl()">Search</button>
+    </div>
     <div>
       <input type="text" id="apiKeyInput" placeholder="Optional YouTube API key (faster)" size="50">
       <button onclick="saveApiKey()">Save Key</button>
@@ -631,6 +635,101 @@
 		  };
 		});
     }
+	
+	async function searchDirectUrl() {
+	  const url = document.getElementById('directUrlInput').value.trim();
+	  const apiKey = document.getElementById('apiKeyInput').value || null;
+	  const resultsDiv = document.getElementById('results');
+
+	  if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
+		resultsDiv.innerHTML = `<p>Error: Please enter a valid YouTube URL.</p>`;
+		return;
+	  }
+
+	  resultsDiv.innerHTML = `<div class="status-button">Searching via direct URL <span class="spinner"></span></div>`;
+
+	  // Treat URL as a "search term" passed to backend
+	  const results = await window.pywebview.api.search(url, apiKey);
+	  resultsDiv.innerHTML = '';
+
+	  if (!results || results.error || results.length === 0) {
+		resultsDiv.innerHTML = `<p>Error: ${results.error || 'No video found.'}</p>`;
+		return;
+	  }
+
+	  // Insert into results exactly like performSearch()
+	  results.forEach(async video => {
+		const container = document.createElement('div');
+		container.className = 'result';
+
+		const title = document.createElement('h3');
+		if (video.title) title.textContent = video.title;
+		container.appendChild(title);
+
+		const iframe = document.createElement('iframe');
+		iframe.src = video.embed;
+		container.appendChild(iframe);
+
+		const controls = document.createElement('div');
+		controls.innerHTML = `
+		  <strong>Resolution:</strong> <span class="resDisplay">${video.resolution || 'Loading...'}</span><br>
+		  <label>Start: <input type="text" value="0:00" class="startTime" size="5"></label>
+		  <label>End: <input type="text" value="" class="endTime" size="5"></label><br>
+		  <button class="downloadBtn">Download</button>
+		  <button class="previewBtn" style="display:none;">Review</button>
+		`;
+		container.appendChild(controls);
+		resultsDiv.appendChild(container);
+
+		// Fetch metadata if needed
+		const meta = await window.pywebview.api.fetch_metadata(video.url);
+		console.log("🎥 Fetched metadata:", meta);
+
+		if (meta && typeof meta === "object") {
+		  controls.querySelector('.resDisplay').textContent = meta.resolution || 'Unknown';
+		  if (!video.title && meta.title) title.textContent = meta.title;
+		} else {
+		  controls.querySelector('.resDisplay').textContent = 'Unknown';
+		}
+
+		const btn = controls.querySelector('.downloadBtn');
+		const previewBtn = controls.querySelector('.previewBtn');
+
+		btn.onclick = async () => {
+		  btn.innerHTML = 'Downloading <span class="spinner"></span>';
+		  btn.disabled = true;
+
+		  const start = controls.querySelector('.startTime').value || null;
+		  const end = controls.querySelector('.endTime').value || "";
+		  const lockedFolderName = selectedFolder;
+
+		  const msg = await window.pywebview.api.download(video.url, start, end);
+
+		  if (msg.includes('complete')) {
+			btn.textContent = 'Complete';
+			btn.disabled = true;
+			btn.style.backgroundColor = '#ccc';
+			btn.style.color = '#666';
+			btn.style.cursor = 'default';
+			previewBtn.style.display = "inline-block";
+
+			if (lockedFolderName) {
+			  const badge = document.createElement('div');
+			  badge.textContent = '✔ Downloaded';
+			  badge.style.cssText = "color: green; font-weight: bold; font-size: 14px; margin-top: 5px;";
+			  controls.appendChild(badge);
+			}
+		  } else {
+			btn.textContent = '✖ Failed';
+			btn.disabled = false;
+		  }
+		};
+
+		previewBtn.onclick = async () => {
+		  await window.pywebview.api.preview();
+		};
+	  });
+	}
 	
   </script>
 </body>

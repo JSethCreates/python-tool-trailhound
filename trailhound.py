@@ -1,4 +1,4 @@
-# TrailHound v6.5
+# TrailHound v6.6
 
 import webview
 import subprocess
@@ -43,6 +43,36 @@ def load_api_key():
 
 def fetch_youtube_links(query, api_key=None):
     results = []
+
+    # Case 1: If it's a YouTube URL, extract metadata directly
+    if "youtube.com/watch?v=" in query or "youtu.be/" in query:
+        try:
+            result = subprocess.run(
+                [YTDLP_PATH, '--print', '%(title)s||%(webpage_url)s||%(duration_string)s||%(height)sp',
+                 '--skip-download', query],
+                capture_output=True, text=True, check=True
+            )
+            line = result.stdout.strip()
+            if line:
+                parts = line.split('||')
+                if len(parts) >= 4:
+                    title = parts[0]
+                    url = parts[1]
+                    duration = parts[2]
+                    resolution = parts[3]
+                    embed = url.replace("watch?v=", "embed/")
+                    results.append({
+                        "title": title,
+                        "url": url,
+                        "embed": embed,
+                        "duration": duration,
+                        "resolution": resolution
+                    })
+            return results
+        except subprocess.CalledProcessError as e:
+            return {'error': f'yt-dlp error: {str(e)}'}
+
+    # Case 2: It's a regular search term
     if api_key:
         try:
             url = (
@@ -63,6 +93,7 @@ def fetch_youtube_links(query, api_key=None):
         except Exception as e:
             return {'error': f"API exception: {str(e)}. Falling back to yt-dlp."}
 
+    # Fallback to yt-dlp search
     try:
         command = [
             YTDLP_PATH,
@@ -82,11 +113,18 @@ def fetch_youtube_links(query, api_key=None):
                 duration = parts[2]
                 resolution = parts[3]
                 embed = url.replace("watch?v=", "embed/")
-                results.append({"title": title, "url": url, "embed": embed, "duration": duration, "resolution": resolution})
+                results.append({
+                    "title": title,
+                    "url": url,
+                    "embed": embed,
+                    "duration": duration,
+                    "resolution": resolution
+                })
     except subprocess.CalledProcessError as e:
         return {'error': f'yt-dlp error: {str(e)}'}
 
     return results
+
 
 def get_images_for_folder(foldername):
     global selected_dir
